@@ -2,10 +2,10 @@
 
 namespace App\Entity;
 
-use App\Repository\ProductRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -16,46 +16,55 @@ class Product
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getproducts"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getproducts"})
      */
     private $name;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getproducts"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getproducts"})
      */
     private $picture;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getproducts"})
      */
     private $alternativeAttribute;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getproducts"})
      */
     private $screen;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getproducts"})
      */
     private $photoResolution;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getproducts"})
      */
     private $battery;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getproducts"})
      */
     private $network;
 
@@ -78,11 +87,13 @@ class Product
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"getproducts"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"getproducts"})
      */
     private $updatedAt;
 
