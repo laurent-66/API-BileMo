@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -17,21 +18,25 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getusers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getusers"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getusers"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getusers"})
      */
     private $email;
 
@@ -42,11 +47,13 @@ class User
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"getusers"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"getusers"})
      */
     private $updatedAt;
 
@@ -58,6 +65,7 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident")
+     * @Groups({"getusers"})
      */
     private $addresses;
 
