@@ -2,10 +2,11 @@
 
 namespace App\Entity;
 
-use App\Repository\CustomerRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\CustomerRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
@@ -16,11 +17,13 @@ class Customer
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getCustomers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getCustomers"})
      */
     private $name;
 
@@ -41,16 +44,19 @@ class Customer
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"getCustomers"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Groups({"getCustomers"})
      */
     private $updatedAt;
 
     /**
      * @ORM\Column(type="string", length=45)
+     * @Groups({"getCustomers"})
      */
     private $email;
 
