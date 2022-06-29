@@ -25,23 +25,27 @@ class User
     /**
      * @ORM\Column(type="string", length=45)
      * @Groups({"getusers"})
+     * @Groups({"postusers"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=45)
      * @Groups({"getusers"})
+     * @Groups({"postusers"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=45)
      * @Groups({"getusers"})
+     * @Groups({"postusers"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"postusers"})
      */
     private $password;
 
@@ -65,7 +69,6 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident")
-     * @Groups({"getusers"})
      */
     private $addresses;
 
