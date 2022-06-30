@@ -89,7 +89,7 @@ class CustomerController extends AbstractController
             if($currentUser->getId() === $userId ) {
                 $emi->remove($currentUser);
                 $emi->flush();
-                return new Response('élément supprimé', 204);
+                return new JsonResponse(null, Response::HTTP_NO_CONTENT);
             }
         }
 
