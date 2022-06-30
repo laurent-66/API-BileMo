@@ -68,7 +68,7 @@ class User
     private $customer;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident")
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
      */
     private $addresses;
 

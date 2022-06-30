@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class CustomerController extends AbstractController
 {
@@ -27,7 +28,12 @@ class CustomerController extends AbstractController
     }
 
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
-    public function getDetailUsertoOneCustomer(int $id, int $userId, CustomerRepository $customerRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function getDetailUsertoOneCustomer(
+        int $id, 
+        int $userId, 
+        CustomerRepository $customerRepository, 
+        UserRepository $userRepository, 
+        SerializerInterface $serializer): JsonResponse
     {
         $customer = $customerRepository->find($id);
         $usersListToCustomer = $customer->getUsers();
@@ -64,5 +70,28 @@ class CustomerController extends AbstractController
         $jsonNewUser = $serializer->serialize($newUser,'json', ['groups' => 'getUsers']);
         $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
+    }
+
+
+    #[Route('api/customers/{id}/users/{userId}', name: 'deleteUserToOneCustomer', methods:['DELETE'])]
+    public function deleteUsertoOneCustomer( 
+        int $id, 
+        int $userId, 
+        CustomerRepository $customerRepository, 
+        EntityManagerInterface $emi): JsonResponse
+
+    {
+
+        $customer = $customerRepository->find($id);
+        $usersListToCustomer = $customer->getUsers();
+
+        foreach($usersListToCustomer as $currentUser) {
+            if($currentUser->getId() === $userId ) {
+                $emi->remove($currentUser);
+                $emi->flush();
+                return new Response('élément supprimé', 204);
+            }
+        }
+
     }
 }
