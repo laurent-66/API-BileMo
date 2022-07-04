@@ -22,7 +22,7 @@ class AddressFixture extends Fixture implements DependentFixtureInterface
             $faker = Factory::create('fr_FR');
 
             $userRandom = rand(0,9);
-            $customerRandom = rand(0,3);
+            $customerRandom = rand(0,1);
 
             $address = new Address(); 
 

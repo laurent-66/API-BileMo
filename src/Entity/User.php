@@ -44,12 +44,6 @@ class User
     private $email;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"postusers"})
-     */
-    private $password;
-
-    /**
      * @ORM\Column(type="datetime")
      * @Groups({"getusers"})
      */
@@ -62,7 +56,7 @@ class User
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $customer;
@@ -114,18 +108,6 @@ class User
     public function setEmail(string $email): self
     {
         $this->email = $email;
-
-        return $this;
-    }
-
-    public function getPassword(): ?string
-    {
-        return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
 
         return $this;
     }
