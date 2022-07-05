@@ -43,11 +43,6 @@ class User
      */
     private $email;
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @Groups({"postusers"})
-     */
-    private $password;
 
     /**
      * @ORM\Column(type="datetime")
