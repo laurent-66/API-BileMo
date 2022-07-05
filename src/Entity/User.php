@@ -56,7 +56,7 @@ class User
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      */
     private $customer;

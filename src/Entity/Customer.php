@@ -229,7 +229,8 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        // return (string) $this->email;
+        return $this->getUserIdentifier();
     }
 
     /**
