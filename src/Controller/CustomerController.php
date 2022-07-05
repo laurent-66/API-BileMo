@@ -19,10 +19,16 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class CustomerController extends AbstractController
 {
     #[Route('api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
-    public function getAllUserstoOneCustomer(int $id, CustomerRepository $customerRepository, SerializerInterface $serializer): JsonResponse
+    public function getAllUserstoOneCustomer(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
-        $customer = $customerRepository->find($id);
-        $usersListToCustomer = $customer->getUsers();
+
+        //check if connected user have an id equals to $id
+        // if($id !== $this->getUser()->getId()) {
+        //     return new JsonResponse(['message'=>'You are not allowed to access this page']);
+        // }
+
+        $usersListToCustomer = $userRepository->findByCustomer($id);
+
         $jsonUsersListToCustomer = $serializer->serialize($usersListToCustomer, 'json', ['groups' => 'getusers']);
         return new JsonResponse($jsonUsersListToCustomer, Response::HTTP_OK, [], true);
     }
@@ -31,22 +37,23 @@ class CustomerController extends AbstractController
     public function getDetailUsertoOneCustomer(
         int $id, 
         int $userId, 
-        CustomerRepository $customerRepository, 
         UserRepository $userRepository, 
         SerializerInterface $serializer): JsonResponse
     {
-        $customer = $customerRepository->find($id);
-        $usersListToCustomer = $customer->getUsers();
 
-        foreach($usersListToCustomer as $user) {
-            if($user->getId() === $userId ) {
-                $detailUser = $userRepository->find($userId);
-                $jsonDetailUsers = $serializer->serialize($detailUser, 'json', ['groups' => 'getusers']);
-                return new JsonResponse($jsonDetailUsers, Response::HTTP_OK, [], true);
-            }
+        //check if connected user have an id equals to $id
+        // if($id !== $this->getUser()->getId()) {
+        //     return new JsonResponse(['message'=>'You are not allowed to access this page'], Response::HTTP_FORBIDDEN);
+        // }
+
+        //check if $id user asked  exist well
+        $user = $userRepository->find($userId);
+        if($user === null) {
+            return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse(null, Response::HTTP_NOT_FOUND);
+        $jsonDetailUsers = $serializer->serialize($userId, 'json', ['groups' => 'getusers']);
+        return new JsonResponse($jsonDetailUsers, Response::HTTP_OK, [], true);
     }
 
 
@@ -59,6 +66,12 @@ class CustomerController extends AbstractController
         EntityManagerInterface $emi,
         UrlGeneratorInterface $urlGenerator): JsonResponse
     {
+
+        //check if connected user have an id equals to $id
+        // if($id !== $this->getUser()->getId()) {
+        //     return new JsonResponse(['message'=>'You are not allowed to access this page'], Response::HTTP_FORBIDDEN);
+        // }
+
         $customer = $customerRepository->find($id);
         $newUser = $serializer->deserialize($request->getContent(), User::class, 'json', ['groups'=> 'postusers']); 
 
@@ -77,20 +90,27 @@ class CustomerController extends AbstractController
     public function deleteUsertoOneCustomer( 
         int $id, 
         int $userId, 
-        CustomerRepository $customerRepository, 
+        UserRepository $userRepository,  
         EntityManagerInterface $emi): JsonResponse
 
     {
+        //check if connected user have an id equals to $id
+        // if($id !== $this->getUser()->getId()) {
+        //     return new JsonResponse(['message'=>'You are not allowed to access this page'], Response::HTTP_FORBIDDEN);
+        // }
 
-        $customer = $customerRepository->find($id);
-        $usersListToCustomer = $customer->getUsers();
+        //check if $id user asked  exist well
+        $user = $userRepository->find($userId);
+        if($user === null) {
+            return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
+        }
+
+        $usersListToCustomer = $userRepository->findByCustomer($id);
 
         foreach($usersListToCustomer as $currentUser) {
-            if($currentUser->getId() === $userId ) {
                 $emi->remove($currentUser);
                 $emi->flush();
                 return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-            }
         }
 
     }

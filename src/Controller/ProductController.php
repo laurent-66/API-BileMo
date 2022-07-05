@@ -25,11 +25,12 @@ class ProductController extends AbstractController
     #[Route('/api/products/{id}', name: 'detailproducts', methods:['GET'])]
     public function getDetailProduct( int $id, ProductRepository $productRepository, SerializerInterface $serializer): JsonResponse
     {
+        //check if $id user asked  exist well
         $product = $productRepository->find($id);
-
-        if($product){
-            $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getproducts']);
-            return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
-        } 
+        if($product === null) {
+            return new JsonResponse(['message'=>'This product not exist'],Response::HTTP_NOT_FOUND);
+        }
+        $jsonProduct = $serializer->serialize($product, 'json', ['groups' => 'getproducts']);
+        return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
     }
 }
