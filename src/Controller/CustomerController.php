@@ -27,7 +27,7 @@ class CustomerController extends AbstractController
         //     return new JsonResponse(['message'=>'You are not allowed to access this page']);
         // }
 
-        $usersListToCustomer = $userRepository->findByCustomer($id);
+        $usersListToCustomer = $userRepository->findOneByCustomer($id);
 
         $jsonUsersListToCustomer = $serializer->serialize($usersListToCustomer, 'json', ['groups' => 'getusers']);
         return new JsonResponse($jsonUsersListToCustomer, Response::HTTP_OK, [], true);

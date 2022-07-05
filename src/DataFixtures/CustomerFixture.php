@@ -11,12 +11,12 @@ class CustomerFixture extends Fixture
 {
     public const CUSTOMER_REF = 'customer-ref_%s';
 
-    private $userPasswordHasher;
+    // private $userPasswordHasher;
 
-    public function __construct(UserPasswordHasherInterface $userPasswordHasher)
-    {
-        $this->userPasswordHasher = $userPasswordHasher;
-    }
+    // public function __construct(UserPasswordHasherInterface $userPasswordHasher)
+    // {
+    //     $this->userPasswordHasher = $userPasswordHasher;
+    // }
 
     public function load(ObjectManager $manager)
     {
@@ -41,7 +41,8 @@ class CustomerFixture extends Fixture
         $orangeUser->setName("orange");
         $orangeUser->setEmail("user@orangeapi.com");
         // $orangeUser->setRoles(["ROLE_USER"]);
-        $orangeUser->setPassword($this->userPasswordHasher->hashPassword($orangeUser, "password"));
+        // $orangeUser->setPassword($this->userPasswordHasher->hashPassword($orangeUser, "password"));
+        $orangeUser->setPassword("password");
         $orangeUser->setCreatedAt($faker->dateTime());
         $orangeUser->setUpdatedAt($faker->dateTime());
         $manager->persist($orangeUser);
@@ -52,7 +53,8 @@ class CustomerFixture extends Fixture
         $orangeAdmin->setName("orange");
         $orangeAdmin->setEmail("admin@orangeapi.com");
         // $orangeAdmin->setRoles(["ROLE_ADMIN"]);
-        $orangeAdmin->setPassword($this->userPasswordHasher->hashPassword($orangeAdmin, "password"));
+        // $orangeUser->setPassword($this->userPasswordHasher->hashPassword($orangeUser, "password"));
+        $orangeAdmin->setPassword("password");
         $orangeAdmin->setCreatedAt($faker->dateTime());
         $orangeAdmin->setUpdatedAt($faker->dateTime());
         $manager->persist($orangeAdmin);
