@@ -19,7 +19,12 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class CustomerController extends AbstractController
 {
     #[Route('api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
-    public function getAllUserstoOneCustomer(int $id, CustomerRepository $customerRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function getAllUserstoOneCustomer(
+        int $id, 
+        Request $request, 
+        CustomerRepository $customerRepository, 
+        UserRepository $userRepository, 
+        SerializerInterface $serializer): JsonResponse
     {
 
         //check if connected user have an id equals to $id
@@ -27,8 +32,12 @@ class CustomerController extends AbstractController
         //     return new JsonResponse(['message'=>'You are not allowed to access this page']);
         // }
 
+        $page = $request->get('page', 1);
+        $limit = $request->get('limit', 3);
 
-        $usersListToCustomer = $userRepository->findByCustomer($id);
+        // $usersListToCustomer = $userRepository->findByCustomer($id);
+        $usersListToCustomer = $userRepository->findAllWithPagination($page, $limit, $id);
+
         $jsonUsersListToCustomer = $serializer->serialize($usersListToCustomer, 'json', ['groups' => 'getusers']);
         return new JsonResponse($jsonUsersListToCustomer, Response::HTTP_OK, [], true);
 

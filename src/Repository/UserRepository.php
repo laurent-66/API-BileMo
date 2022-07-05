@@ -4,7 +4,10 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 
 /**
  * @extends ServiceEntityRepository<User>
@@ -16,9 +19,10 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, EntityManagerInterface $entityManager)
     {
         parent::__construct($registry, User::class);
+        $this->entityManager = $entityManager;
     }
 
     public function add(User $entity, bool $flush = false): void
@@ -36,6 +40,20 @@ class UserRepository extends ServiceEntityRepository
 
         if ($flush) {
             $this->getEntityManager()->flush();
+        }
+    }
+
+    public function findAllWithPagination($page, $limit, $id){
+
+        //u alias User
+        //c alias Customer
+        //requête DQL
+        $dql = "SELECT u, c FROM User u JOIN u.Customer c WHERE c.id = $id";
+        $query = $this->entityManager->createQuery($dql)
+                               ->setFirstResult(($page -1) * $limit)
+                               ->setMaxResults($limit);
+
+        return $query->getResult();
         }
     }
 
@@ -63,4 +81,3 @@ class UserRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-}
