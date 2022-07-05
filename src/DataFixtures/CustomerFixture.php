@@ -34,29 +34,6 @@ class CustomerFixture extends Fixture
             "freeAdmin"
         ];
 
-
-        // for ($i = 0; $i < count($dataRoleCustomerCollection); $i++) {  
-
-        //     if(stristr($dataRoleCustomerCollection[$i],"User") === "User"){
-
-        //         $this->fixturesByAccessRole->generateFixturesForRoleUser(new Customer(), $dataRoleCustomerCollection[$i]);
-        //         $this->addReference(sprintf(self::CUSTOMER_REF, $i), new Customer()); 
-
-        //     } else if (stristr($dataRoleCustomerCollection[$i],"Admin") === "Admin") {
-        //         $this->fixturesByAccessRole->generateFixturesForRoleAdmin(new Customer(), $dataRoleCustomerCollection[$i]);
-        //         $this->addReference(sprintf(self::CUSTOMER_REF, $i), new Customer()); 
-        //     }
-        // }
-
-
-        // $this->fixturesByAccessRole->generateFixturesForRoleUser($dataRoleCustomerCollection[0],0);
-        // $this->fixturesByAccessRole->generateFixturesForRoleUser($dataRoleCustomerCollection[1],1);
-        // $this->fixturesByAccessRole->generateFixturesForRoleUser($dataRoleCustomerCollection[2],2);
-        // $this->fixturesByAccessRole->generateFixturesForRoleUser($dataRoleCustomerCollection[3],3);
-        // $this->fixturesByAccessRole->generateFixturesForRoleAdmin($dataRoleCustomerCollection[4],4);
-        // $this->fixturesByAccessRole->generateFixturesForRoleAdmin($dataRoleCustomerCollection[5],5);
-        // $this->fixturesByAccessRole->generateFixturesForRoleAdmin($dataRoleCustomerCollection[6],6);
-        // $this->fixturesByAccessRole->generateFixturesForRoleAdmin($dataRoleCustomerCollection[7],7);
         $faker = Factory::create('fr_FR');
 
         // Création d'un user "normal" orange
@@ -75,7 +52,7 @@ class CustomerFixture extends Fixture
         $orangeAdmin->setName("orange");
         $orangeAdmin->setEmail("admin@orangeapi.com");
         $orangeAdmin->setRoles(["ROLE_ADMIN"]);
-        $orangeAdmin->setPassword($this->userPasswordHasher->hashPassword($orangeAdmin, "password"));
+        $orangeUser->setPassword($this->userPasswordHasher->hashPassword($orangeUser, "admin"));
         $orangeAdmin->setCreatedAt($faker->dateTime());
         $orangeAdmin->setUpdatedAt($faker->dateTime());
         $manager->persist($orangeAdmin);

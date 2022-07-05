@@ -9,16 +9,15 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class SecurityController extends AbstractController
 {
-    #[Route('/api/login_check', name: 'api_login', methods:['POST'])]
-    public function index(): Response
+    #[Route('/api/login_check', name: 'api_login')]
+    public function api_login(): JsonResponse
     {
-        $user = $this->getUser();
+        $currentCustomer = $this->getUser();
 
-        // return new JsonResponse([
-        //     'email' => $user->getEmail(),
-        //     'roles' => $user->getRoles()
-        // ]);
+        return new JsonResponse([
+            'email' => $currentCustomer->getEmail(),
+            'roles' => $currentCustomer->getRoles()
+        ]);
 
-        return new Response("nouvelle Réponse");
     }
 }
