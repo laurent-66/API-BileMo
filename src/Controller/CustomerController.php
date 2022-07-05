@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 class CustomerController extends AbstractController
 {
     #[Route('api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
-    public function getAllUserstoOneCustomer(int $id, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
+    public function getAllUserstoOneCustomer(int $id, CustomerRepository $customerRepository, UserRepository $userRepository, SerializerInterface $serializer): JsonResponse
     {
 
         //check if connected user have an id equals to $id
@@ -27,10 +27,11 @@ class CustomerController extends AbstractController
         //     return new JsonResponse(['message'=>'You are not allowed to access this page']);
         // }
 
-        $usersListToCustomer = $userRepository->findOneByCustomer($id);
 
+        $usersListToCustomer = $userRepository->findByCustomer($id);
         $jsonUsersListToCustomer = $serializer->serialize($usersListToCustomer, 'json', ['groups' => 'getusers']);
         return new JsonResponse($jsonUsersListToCustomer, Response::HTTP_OK, [], true);
+
     }
 
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
@@ -52,7 +53,7 @@ class CustomerController extends AbstractController
             return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
         }
 
-        $jsonDetailUsers = $serializer->serialize($userId, 'json', ['groups' => 'getusers']);
+        $jsonDetailUsers = $serializer->serialize($user, 'json', ['groups' => 'getusers']);
         return new JsonResponse($jsonDetailUsers, Response::HTTP_OK, [], true);
     }
 
