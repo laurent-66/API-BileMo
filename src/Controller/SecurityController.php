@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,9 +14,8 @@ class SecurityController extends AbstractController
         $currentCustomer = $this->getUser();
 
         return new JsonResponse([
-            'email' => $currentCustomer->getEmail(),
+            'email' => $currentCustomer->getUserIdentifier(),
             'roles' => $currentCustomer->getRoles()
         ]);
-
     }
 }
