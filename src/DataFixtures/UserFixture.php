@@ -30,7 +30,7 @@ class UserFixture extends Fixture implements DependentFixtureInterface
 
             $faker = Factory::create('fr_FR');
 
-            $customerRandom = rand(0,1);
+            $customerRandom = 0;
 
             $user = new User(); 
 

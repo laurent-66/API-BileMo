@@ -39,6 +39,19 @@ class UserRepository extends ServiceEntityRepository
         }
     }
 
+    public function findAllWithPagination($page, $limit, $id){
+
+        return $this->createQueryBuilder('u')
+        ->where('u.customer = :customer')
+        ->setParameter('customer', $id)
+        ->setFirstResult(($page -1) * $limit)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+
+        }
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
@@ -63,4 +76,3 @@ class UserRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-}
