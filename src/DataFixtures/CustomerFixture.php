@@ -36,27 +36,16 @@ class CustomerFixture extends Fixture
 
         $faker = Factory::create('fr_FR');
 
-        // Création d'un user "normal" orange
-        $orangeUser = new Customer();
-        $orangeUser->setName("orange");
-        $orangeUser->setEmail("user@orangeapi.com");
-        $orangeUser->setRoles(["ROLE_USER"]);
-        $orangeUser->setPassword($this->userPasswordHasher->hashPassword($orangeUser, "password"));
-        $orangeUser->setCreatedAt($faker->dateTime());
-        $orangeUser->setUpdatedAt($faker->dateTime());
-        $manager->persist($orangeUser);
-        $this->addReference(sprintf(self::CUSTOMER_REF, 0), $orangeUser); 
-
         // Création d'un user admin orange
         $orangeAdmin = new Customer(); 
         $orangeAdmin->setName("orange");
         $orangeAdmin->setEmail("admin@orangeapi.com");
         $orangeAdmin->setRoles(["ROLE_ADMIN"]);
-        $orangeUser->setPassword($this->userPasswordHasher->hashPassword($orangeUser, "admin"));
+        $orangeAdmin->setPassword($this->userPasswordHasher->hashPassword($orangeAdmin, "admin"));
         $orangeAdmin->setCreatedAt($faker->dateTime());
         $orangeAdmin->setUpdatedAt($faker->dateTime());
         $manager->persist($orangeAdmin);
-        $this->addReference(sprintf(self::CUSTOMER_REF, 1), $orangeAdmin); 
+        $this->addReference(sprintf(self::CUSTOMER_REF, 0), $orangeAdmin); 
 
         $manager->flush();
         
