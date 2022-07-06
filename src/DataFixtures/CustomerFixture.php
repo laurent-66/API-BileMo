@@ -23,32 +23,24 @@ class CustomerFixture extends Fixture
 
         //fixtures Customers
 
-        $dataRoleCustomerCollection = [
-            "OrangeUser", 
-            "BouyguesUser", 
-            "SFRUser", 
-            "freeUser",
-            "OrangeAdmin", 
-            "BouyguesAdmin", 
-            "SFRAdmin", 
-            "freeAdmin"
-        ];
+        $dataCustomerCollection = ["Orange","Bouygues","Sfr","Free"];
 
-        $faker = Factory::create('fr_FR');
+        for($i = 0 ; $i < count($dataCustomerCollection) ; $i++ ) {
 
-        // Création d'un user admin orange
-        $orangeAdmin = new Customer(); 
-        $orangeAdmin->setName("orange");
-        $orangeAdmin->setEmail("admin@orangeapi.com");
-        $orangeAdmin->setRoles(["ROLE_ADMIN"]);
-        $orangeAdmin->setPassword($this->userPasswordHasher->hashPassword($orangeAdmin, "admin"));
-        $orangeAdmin->setCreatedAt($faker->dateTime());
-        $orangeAdmin->setUpdatedAt($faker->dateTime());
-        $manager->persist($orangeAdmin);
-        $this->addReference(sprintf(self::CUSTOMER_REF, 0), $orangeAdmin); 
+            $faker = Factory::create('fr_FR');
+            
+            $customer = new Customer(); 
 
-        $manager->flush();
-        
+            $customer->setName($dataCustomerCollection[$i]);
+            $customer->setEmail('admin@'.$dataCustomerCollection[$i].'api.com');
+            $customer->setRoles(["ROLE_ADMIN"]);
+            $customer->setPassword($this->userPasswordHasher->hashPassword($customer, "admin"));
+            $customer->setCreatedAt($faker->dateTime());
+            $customer->setUpdatedAt($faker->dateTime());
+            $manager->persist($customer); 
+            $manager->flush();
+            $this->addReference(sprintf(self::CUSTOMER_REF, $i), $customer);  
+        }
     } 
 
 }
