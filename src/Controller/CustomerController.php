@@ -122,6 +122,5 @@ class CustomerController extends AbstractController
                 $emi->flush();
                 return new JsonResponse(null, Response::HTTP_NO_CONTENT);
         }
-
     }
 }
