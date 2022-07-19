@@ -19,7 +19,7 @@ security:
             security: false
         # main:
         #     lazy: true
-        #     provider: app_user_provider
+        #     provider: app_user_provider 
 
         login:
             pattern: ^/api/login
@@ -33,6 +33,13 @@ security:
             pattern:   ^/api
             stateless: true
             jwt: ~
+
+
+
+            # guard:
+            #     authenticators:
+            #         - lexik_jwt_authentication.jwt_token_authenticator
+
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 

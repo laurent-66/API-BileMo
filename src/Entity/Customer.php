@@ -199,9 +199,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-
-
-
     public function getEmail(): ?string
     {
         return $this->email;
@@ -229,8 +226,8 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUsername(): string
     {
-        // return $this->email;
-        return $this->getUserIdentifier();
+        return (string) $this->email;
+        // return $this->getUserIdentifier();
     }
 
     /**

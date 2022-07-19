@@ -18,7 +18,7 @@ use Symfony\Component\Serializer\Encoder\JsonEncoder;
 
 class CustomerController extends AbstractController
 {
-    #[Route('api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
+    #[Route('/api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
     public function getAllUserstoOneCustomer(
         int $id, 
         Request $request, 
