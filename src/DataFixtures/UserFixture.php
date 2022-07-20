@@ -34,19 +34,12 @@ class UserFixture extends Fixture implements DependentFixtureInterface
 
             $user = new User(); 
 
-            $plainPassword = $faker->word();
-
-            // $passwordHashed = $this->passwordHasher->hashPassword($user, $plainPassword);
-
             $user->setCustomer($this->getReference('customer-ref_'.$customerRandom)); 
             $user->setFirstName($faker->firstName());
             $user->setLastName($faker->lastName());
             $user->setEmail($faker->email());
-            // $user->setPassword($passwordHashed);
-            $user->setPassword($plainPassword);
             $user->setCreatedAt($faker->dateTime());
             $user->setUpdatedAt($faker->dateTime());
-
             $manager->persist($user); 
             $manager->flush();
             $this->addReference(sprintf(self::USER_REF, $i), $user); 
