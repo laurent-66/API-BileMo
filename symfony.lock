@@ -59,7 +59,7 @@
             "ref": "5b2157bcd5778166a5696e42f552ad36529a07a6"
         },
         "files": [
-            "./config/packages/lexik_jwt_authentication.yaml"
+            "config/packages/lexik_jwt_authentication.yaml"
         ]
     },
     "sensio/framework-extra-bundle": {
