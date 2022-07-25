@@ -38,19 +38,26 @@ class CustomerController extends AbstractController
     public function getAllUserstoOneCustomer(Request $request, int $id): JsonResponse
     {
 
-        $page = $request->get('page', 1);
-        $limit = $request->get('limit', 3);
+        $customer = $this->customerRepository->find($id);
 
-        $idCache = "getAllUsers-" . $page . "-" . $limit;
-        $userList = $this->cachePool->get($idCache, function (ItemInterface $item) use ($page, $limit, $id) {
-            echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
-            $item->tag("usersCache");
-            return $this->userRepository->findAllWithPagination($page, $limit, $id);
-        });
+        if($customer === null) {
+            return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
 
-        $jsonUsersList = $this->serializer->serialize($userList, 'json', ['groups' => 'getusers']);
-        return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
+        } else {
 
+            $page = $request->get('page', 1);
+            $limit = $request->get('limit', 3);
+    
+            $idCache = "getAllUsers-" . $page . "-" . $limit;
+            $userList = $this->cachePool->get($idCache, function (ItemInterface $item) use ($page, $limit, $id) {
+                echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
+                $item->tag("usersCache");
+                return $this->userRepository->findAllWithPagination($page, $limit, $id);
+            });
+    
+            $jsonUsersList = $this->serializer->serialize($userList, 'json', ['groups' => 'getusers']);
+            return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
+        }
     }
 
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
@@ -59,20 +66,21 @@ class CustomerController extends AbstractController
 
         //check if $id customer asked  exist well
         $customer = $this->customerRepository->find($id);
+        $user = $this->userRepository->find($userId);
         if($customer === null) {
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
+
+        } else if($user === null) { 
+
+        return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
+
+        } else {
+
+            $jsonDetailUsers = $this->serializer->serialize($user, 'json', ['groups' => 'getusers']);
+            return new JsonResponse($jsonDetailUsers, Response::HTTP_OK, [], true);
         }
 
-        //check if $id user asked  exist well
-        $user = $this->userRepository->find($userId);
-        if($user === null) {
-            return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
-        }
-
-        $jsonDetailUsers = $this->serializer->serialize($user, 'json', ['groups' => 'getusers']);
-        return new JsonResponse($jsonDetailUsers, Response::HTTP_OK, [], true);
     }
-
 
     #[Route('api/customers/{id}/users', name: 'postUserToOneCustomer', methods:['POST'])]
     public function createUsertoOneCustomer(
@@ -81,17 +89,27 @@ class CustomerController extends AbstractController
         UrlGeneratorInterface $urlGenerator): JsonResponse
     {
 
-        $customer = $this->customerRepository->find($id);
-        $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', ['groups'=> 'postusers']); 
 
-        $newUser->setCustomer($customer);
-        $newUser->setCreatedAt(new \DateTime());
-        $newUser->setUpdatedAt(new \DateTime());
-        $this->entityManager->persist($newUser);
-        $this->entityManager->flush();
-        $jsonNewUser = $this->serializer->serialize($newUser,'json', ['groups' => 'getUsers']);
-        $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-        return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
+        $customer = $this->customerRepository->find($id);
+
+        if($customer === null) {
+            return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
+
+        } else {
+
+            $customer = $this->customerRepository->find($id);
+            $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', ['groups'=> 'postusers']); 
+
+            $newUser->setCustomer($customer);
+            $newUser->setCreatedAt(new \DateTime());
+            $newUser->setUpdatedAt(new \DateTime());
+            $this->entityManager->persist($newUser);
+            $this->entityManager->flush();
+            $jsonNewUser = $this->serializer->serialize($newUser,'json', ['groups' => 'getUsers']);
+            $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+            return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
+
+        }
     }
 
 
