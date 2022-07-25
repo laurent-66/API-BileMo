@@ -18,7 +18,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class CustomerController extends AbstractController
+class CustomerController extends AbstractController 
 {
     public function __construct(
         SerializerInterface $serializer,
