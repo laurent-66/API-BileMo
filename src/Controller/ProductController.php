@@ -5,13 +5,14 @@ namespace App\Controller;
 use App\Repository\UserRepository;
 use App\Repository\ProductRepository;
 use App\Repository\CustomerRepository;
+use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Component\Serializer\SerializerInterface;
+use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class ProductController extends AbstractController
@@ -45,7 +46,8 @@ class ProductController extends AbstractController
             return $this->productRepository->findAllWithPagination($page, $limit);
         });
 
-        $jsonproductList = $this->serializer->serialize($allProducts , 'json', ['groups' => 'getproducts']);
+        $context = SerializationContext::create()->setGroups(["getproducts"]);
+        $jsonproductList = $this->serializer->serialize($allProducts , 'json', $context );
         return new JsonResponse($jsonproductList, Response::HTTP_OK, [], true);
     }
 
@@ -64,7 +66,8 @@ class ProductController extends AbstractController
             return $this->productRepository->find($id);
         });
 
-        $jsonProduct = $this->serializer->serialize($oneProduct , 'json', ['groups' => 'getproducts']);
+        $context = SerializationContext::create()->setGroups(["getproducts"]);
+        $jsonProduct = $this->serializer->serialize($oneProduct , 'json', $context);
         return new JsonResponse($jsonProduct, Response::HTTP_OK, [], true);
     }
 }

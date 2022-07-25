@@ -5,14 +5,15 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Repository\CustomerRepository;
+use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
+use JMS\Serializer\SerializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -55,7 +56,8 @@ class CustomerController extends AbstractController
                 return $this->userRepository->findAllWithPagination($page, $limit, $id);
             });
     
-            $jsonUsersList = $this->serializer->serialize($userList, 'json', ['groups' => 'getusers']);
+            $context = SerializationContext::create()->setGroups(["getusers"]);
+            $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
             return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
         }
     }
@@ -80,10 +82,11 @@ class CustomerController extends AbstractController
             $oneUser = $this->cachePool->get($idCache, function (ItemInterface $item) use ($userId) {
                 echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
                 $item->tag("oneUserCache");
-                return $this->userRepository->find($userId);
+                return $this->userRepository->find($userId); 
             });
 
-            $jsonDetailUser = $this->serializer->serialize($oneUser , 'json', ['groups' => 'getusers']);
+            $context = SerializationContext::create()->setGroups(["getusers"]);
+            $jsonDetailUser = $this->serializer->serialize($oneUser , 'json', $context );
             return new JsonResponse($jsonDetailUser, Response::HTTP_OK, [], true);
         }
 
@@ -112,7 +115,9 @@ class CustomerController extends AbstractController
             $newUser->setUpdatedAt(new \DateTime());
             $this->entityManager->persist($newUser);
             $this->entityManager->flush();
-            $jsonNewUser = $this->serializer->serialize($newUser,'json', ['groups' => 'getUsers']);
+
+            $context = SerializationContext::create()->setGroups(["getusers"]);
+            $jsonNewUser = $this->serializer->serialize($newUser,'json', $context );
             $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
 
