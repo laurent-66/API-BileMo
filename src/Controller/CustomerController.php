@@ -76,8 +76,15 @@ class CustomerController extends AbstractController
 
         } else {
 
-            $jsonDetailUsers = $this->serializer->serialize($user, 'json', ['groups' => 'getusers']);
-            return new JsonResponse($jsonDetailUsers, Response::HTTP_OK, [], true);
+            $idCache = "getOneUser";
+            $oneUser = $this->cachePool->get($idCache, function (ItemInterface $item) use ($userId) {
+                echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
+                $item->tag("oneUserCache");
+                return $this->userRepository->find($userId);
+            });
+
+            $jsonDetailUser = $this->serializer->serialize($oneUser , 'json', ['groups' => 'getusers']);
+            return new JsonResponse($jsonDetailUser, Response::HTTP_OK, [], true);
         }
 
     }
@@ -114,7 +121,7 @@ class CustomerController extends AbstractController
 
 
     #[Route('api/customers/{id}/users/{userId}', name: 'deleteUserToOneCustomer', methods:['DELETE'])]
-    public function deleteUsertoOneCustomer( int $id, int $userId): JsonResponse
+    public function deleteUser( int $id, int $userId): JsonResponse
     {
 
         $customer = $this->customerRepository->find($id);
@@ -130,6 +137,7 @@ class CustomerController extends AbstractController
  
         } else {
             try {
+                $this->cachePool->invalidateTags("usersCache");
                 $this->entityManager->remove($user);
                 $this->entityManager>flush();
                 return new JsonResponse(null, Response::HTTP_NO_CONTENT);
