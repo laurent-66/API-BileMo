@@ -137,7 +137,7 @@ class CustomerController extends AbstractController
 
 
     #[Route('api/customers/{id}/users/{userId}', name: 'deleteUserToOneCustomer', methods:['DELETE'])]
-    public function deleteUser( int $id, int $userId): JsonResponse
+    public function deleteUser( EntityManagerInterface $em, int $id, int $userId): JsonResponse
     {
 
         $customer = $this->customerRepository->find($id);
@@ -153,9 +153,10 @@ class CustomerController extends AbstractController
  
         } else {
             try {
-                $this->cachePool->invalidateTags("usersCache");
+                $this->cachePool->invalidateTags(["usersCache"]);
                 $this->entityManager->remove($user);
-                $this->entityManager>flush();
+                $this->entityManager->flush();
+
                 return new JsonResponse(null, Response::HTTP_NO_CONTENT);
             } catch (Exception $e) {
                 dump($e);
