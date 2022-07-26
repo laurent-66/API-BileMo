@@ -3,12 +3,33 @@
 namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use App\Repository\UserRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
+use Hateoas\Configuration\Annotation as Hateoas;
+
 
 /**
+ * @Hateoas\Relation(
+ *      "self",
+ *      href = @Hateoas\Route(
+ *          "detailUserToOneCustomer",
+ *          parameters = { "id" = "expr(object.getId())" }
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="getUsers")
+ * )
+ * 
+ * 
+ * @Hateoas\Relation(
+ *      "delete",
+ *      href = @Hateoas\Route(
+ *          "deleteUserToOneCustomer",
+ *          parameters = { "id" = "expr(object.getId())" },
+ *      ),
+ *      exclusion = @Hateoas\Exclusion(groups="getUsers"),
+ * )
+ * 
+ * 
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  */
@@ -24,45 +45,43 @@ class User
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers"})
-     * @Groups({"postusers"})
+     * @Groups({"getusers", "postusers"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers"})
-     * @Groups({"postusers"})
+     * @Groups({"getusers", "postusers"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers"})
-     * @Groups({"postusers"})
+     * @Groups({"getusers", "postusers"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getusers"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getusers"})
      */
     private $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"getusers", "getCustomers"})
      */
     private $customer;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"}) 
+     * @var Collection
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
+     * @Groups({"getusers", "getAddress"}) 
      */
     private $addresses;
 

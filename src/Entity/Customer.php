@@ -7,12 +7,13 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 
 /**
+ * 
  * @ORM\Entity(repositoryClass=CustomerRepository::class)
  */
 class Customer implements UserInterface, PasswordAuthenticatedUserInterface
@@ -21,7 +22,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"getCustomers"})
      */
     private $id;
 
@@ -48,13 +48,11 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getCustomers"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getCustomers"})
      */
     private $updatedAt;
 
