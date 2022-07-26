@@ -8,6 +8,7 @@ use App\Repository\CustomerRepository;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use JMS\Serializer\DeserializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -53,7 +54,7 @@ class CustomerController extends AbstractController
             $userList = $this->cachePool->get($idCache, function (ItemInterface $item) use ($page, $limit, $id) {
                 echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
                 $item->tag("usersCache");
-                return $this->userRepository->findAllWithPagination($page, $limit, $id);
+                return $this->userRepository->findAllWithPagination($page, $limit, $id); 
             });
     
             $context = SerializationContext::create()->setGroups(["getusers"]);
@@ -106,9 +107,10 @@ class CustomerController extends AbstractController
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
 
         } else {
-
-            $customer = $this->customerRepository->find($id);
-            $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', ['groups'=> 'postusers']); 
+            // transform the json data on object
+            //Deserialization
+            $contextDeserialization = DeserializationContext::create()->setGroups(["postusers"]);
+            $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', $contextDeserialization); 
 
             $newUser->setCustomer($customer);
             $newUser->setCreatedAt(new \DateTime());
@@ -116,8 +118,10 @@ class CustomerController extends AbstractController
             $this->entityManager->persist($newUser);
             $this->entityManager->flush();
 
-            $context = SerializationContext::create()->setGroups(["getusers"]);
-            $jsonNewUser = $this->serializer->serialize($newUser,'json', $context );
+            //return response json of user created
+            //Serialization
+            $contextSerialization = SerializationContext::create()->setGroups(["getusers"]);
+            $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
             $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
 
