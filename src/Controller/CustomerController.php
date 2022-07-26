@@ -57,7 +57,7 @@ class CustomerController extends AbstractController
                 return $this->userRepository->findAllWithPagination($page, $limit, $id); 
             });
     
-            $context = SerializationContext::create()->setGroups(["getusers"]);
+            $context = SerializationContext::create()->setGroups(["getusers", "getCustomers", "getAddress"]);
             $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
             return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
         }
@@ -66,10 +66,9 @@ class CustomerController extends AbstractController
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
     public function getDetailUsertoOneCustomer(int $id, int $userId): JsonResponse
     {
-
+ 
         $customer = $this->customerRepository->find($id);
         $user = $this->userRepository->find($userId);
-        dump($user);
 
         if($customer === null) {
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
@@ -79,19 +78,24 @@ class CustomerController extends AbstractController
         return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
 
         } else {
-            $jsonDetailUser = $this->cachePool->get("getOneUser", function (ItemInterface $item, int $userId) {
-                echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
-                $item->tag("oneUserCache");
-                $user = $this->userRepository->find($userId); 
-                $context = SerializationContext::create()->setGroups(["getusers"]);
-                return $this->serializer->serialize($user, 'json', $context );
-            });
 
-            dump($jsonDetailUser);
-            exit;
+        $idCache = "getOneUser-" . $userId;
 
+        $user = $this->cachePool->get($idCache, function (ItemInterface $item) use($userId, $user) {
+            echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
+            $item->tag("oneUserCache-".$userId);
+            return $this->userRepository->find($userId); 
+        });
 
-            return new JsonResponse($jsonDetailUser, Response::HTTP_OK, [], true);
+        $context = SerializationContext::create()->setGroups(["getusers", "getCustomers", "getAddress"]);
+        $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
+        return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
+
+        // $user = $this->userRepository->find($userId); 
+        // $context = SerializationContext::create()->setGroups(["getusers", "getCustomers", "getAddress"]);
+        // $jsonDetailUser = $this->serializer->serialize($user, 'json', $context );
+        // return new JsonResponse($jsonDetailUser, Response::HTTP_OK, [], true);
+
         }
 
     }

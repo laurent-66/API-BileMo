@@ -45,48 +45,43 @@ class User
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers"})
-     * @Groups({"postusers"})
+     * @Groups({"getusers", "postusers"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers"})
-     * @Groups({"postusers"})
+     * @Groups({"getusers", "postusers"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers"})
-     * @Groups({"postusers"})
+     * @Groups({"getusers", "postusers"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getusers"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getusers"})
      */
     private $updatedAt;
 
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"getusers"})
+     * @Groups({"getusers", "getCustomers"})
      */
     private $customer;
 
     /**
-     * 
+     * @var Collection
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
-     * @Groups({"getusers"}) 
+     * @Groups({"getusers", "getAddress"}) 
      */
     private $addresses;
 

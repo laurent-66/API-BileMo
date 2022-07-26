@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\AddressRepository;
+use JMS\Serializer\Annotation\Groups;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -19,41 +20,49 @@ class Address
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"getAddress"})
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getAddress"})
      */
     private $path;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"getAddress"})
      */
     private $apartment;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
+     * @Groups({"getAddress"})
      */
     private $floor;
 
     /**
      * @ORM\Column(type="integer")
+     * @Groups({"getAddress"})
      */
     private $zipCode;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"getAddress"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"getAddress"})
      */
     private $billing;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"getAddress"})
      */
     private $delivery;
 

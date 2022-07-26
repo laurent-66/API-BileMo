@@ -22,7 +22,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"getCustomers"})
      */
     private $id;
 
@@ -49,13 +48,11 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getCustomers"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime")
-     * @Groups({"getCustomers"})
      */
     private $updatedAt;
 
