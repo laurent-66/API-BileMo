@@ -79,11 +79,14 @@ class User
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"getusers"})
      */
     private $customer;
 
     /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"}) 
+     * 
+     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
+     * @Groups({"getusers"}) 
      */
     private $addresses;
 

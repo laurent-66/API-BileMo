@@ -67,9 +67,10 @@ class CustomerController extends AbstractController
     public function getDetailUsertoOneCustomer(int $id, int $userId): JsonResponse
     {
 
-        //check if $id customer asked  exist well
         $customer = $this->customerRepository->find($id);
         $user = $this->userRepository->find($userId);
+        dump($user);
+
         if($customer === null) {
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
 
@@ -78,16 +79,18 @@ class CustomerController extends AbstractController
         return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
 
         } else {
-
-            $idCache = "getOneUser";
-            $oneUser = $this->cachePool->get($idCache, function (ItemInterface $item) use ($userId) {
+            $jsonDetailUser = $this->cachePool->get("getOneUser", function (ItemInterface $item, int $userId) {
                 echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
                 $item->tag("oneUserCache");
-                return $this->userRepository->find($userId); 
+                $user = $this->userRepository->find($userId); 
+                $context = SerializationContext::create()->setGroups(["getusers"]);
+                return $this->serializer->serialize($user, 'json', $context );
             });
 
-            $context = SerializationContext::create()->setGroups(["getusers"]);
-            $jsonDetailUser = $this->serializer->serialize($oneUser , 'json', $context );
+            dump($jsonDetailUser);
+            exit;
+
+
             return new JsonResponse($jsonDetailUser, Response::HTTP_OK, [], true);
         }
 
