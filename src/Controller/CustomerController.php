@@ -57,7 +57,7 @@ class CustomerController extends AbstractController
                 return $this->userRepository->findAllWithPagination($page, $limit, $id); 
             });
     
-            $context = SerializationContext::create()->setGroups(["getusers", "getCustomers", "getAddress"]);
+            $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
             $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
             return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
         }
@@ -87,7 +87,7 @@ class CustomerController extends AbstractController
             return $this->userRepository->find($userId); 
         });
 
-        $context = SerializationContext::create()->setGroups(["getusers", "getCustomers", "getAddress"]);
+        $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
         $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
         return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
 
@@ -116,7 +116,7 @@ class CustomerController extends AbstractController
         } else {
             // transform the json data on object
             //Deserialization
-            $contextDeserialization = DeserializationContext::create()->setGroups(["postusers"]);
+            $contextDeserialization = DeserializationContext::create()->setGroups(["postUsers"]);
             $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', $contextDeserialization); 
 
             $newUser->setCustomer($customer);
@@ -127,7 +127,7 @@ class CustomerController extends AbstractController
 
             //return response json of user created
             //Serialization
-            $contextSerialization = SerializationContext::create()->setGroups(["getusers"]);
+            $contextSerialization = SerializationContext::create()->setGroups(["getUsers"]);
             $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
             $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);

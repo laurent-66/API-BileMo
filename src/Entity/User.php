@@ -2,31 +2,26 @@
 
 namespace App\Entity;
 
+use App\Entity\Customer;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use JMS\Serializer\Annotation\Groups;
 use Hateoas\Configuration\Annotation as Hateoas;
 
 
 /**
+ * 
  * @Hateoas\Relation(
  *      "self",
- *      href = @Hateoas\Route(
- *          "detailUserToOneCustomer",
- *          parameters = { "id" = "expr(object.getId())" }
- *      ),
+ *      href = "expr('/api/customers/' ~ object.getCustomer().getId() ~ '/users/' ~ object.getId())",
  *      exclusion = @Hateoas\Exclusion(groups="getUsers")
  * )
  * 
- * 
  * @Hateoas\Relation(
  *      "delete",
- *      href = @Hateoas\Route(
- *          "deleteUserToOneCustomer",
- *          parameters = { "id" = "expr(object.getId())" },
- *      ),
- *      exclusion = @Hateoas\Exclusion(groups="getUsers"),
+ *      href = "expr('/api/customers/' ~ object.getCustomer().getId() ~ '/users/' ~ object.getId())",
+ *      exclusion = @Hateoas\Exclusion(groups="getUsers")
  * )
  * 
  * 
@@ -39,25 +34,25 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"getusers"})
+     * @Groups({"getUsers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers", "postusers"})
+     * @Groups({"getUsers", "postUsers"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers", "postusers"})
+     * @Groups({"getUsers", "postUsers"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getusers", "postusers"})
+     * @Groups({"getUsers", "postUsers"})
      */
     private $email;
 
@@ -74,14 +69,14 @@ class User
     /**
      * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"getusers", "getCustomers"})
+     * @Groups({"getUsers", "getCustomers"})
      */
     private $customer;
 
     /**
      * @var Collection
      * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
-     * @Groups({"getusers", "getAddress"}) 
+     * @Groups({"getUsers", "getAddress"}) 
      */
     private $addresses;
 
