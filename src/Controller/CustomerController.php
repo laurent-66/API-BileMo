@@ -91,11 +91,6 @@ class CustomerController extends AbstractController
         $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
         return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
 
-        // $user = $this->userRepository->find($userId); 
-        // $context = SerializationContext::create()->setGroups(["getusers", "getCustomers", "getAddress"]);
-        // $jsonDetailUser = $this->serializer->serialize($user, 'json', $context );
-        // return new JsonResponse($jsonDetailUser, Response::HTTP_OK, [], true);
-
         }
 
     }
