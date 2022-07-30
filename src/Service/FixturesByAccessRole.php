@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Service;
 
 use Faker\Factory;
 use App\Entity\Customer;

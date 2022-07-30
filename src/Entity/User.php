@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Entity\Customer;
 use Doctrine\ORM\Mapping as ORM;
+use JMS\Serializer\Annotation\Since;
 use JMS\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -79,6 +80,13 @@ class User
      * @Groups({"getUsers", "getAddress"}) 
      */
     private $addresses;
+
+    /**
+     * @ORM\Column(type="date", nullable=true)
+     * @Groups({"getUsers", "getCustomers"})
+     * @Since("2.0")
+     */
+    private $subscriptionAnniversaryDate;
 
     public function __construct()
     {
@@ -188,6 +196,18 @@ class User
                 $address->setResident(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getSubscriptionAnniversaryDate(): ?\DateTimeInterface
+    {
+        return $this->subscriptionAnniversaryDate;
+    }
+
+    public function setSubscriptionAnniversaryDate(\DateTimeInterface $subscriptionAnniversaryDate): self
+    {
+        $this->subscriptionAnniversaryDate = $subscriptionAnniversaryDate;
 
         return $this;
     }

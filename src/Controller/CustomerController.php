@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Service\VersioningService;
 use App\Repository\CustomerRepository;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -37,7 +38,7 @@ class CustomerController extends AbstractController
     }
 
     #[Route('/api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
-    public function getAllUserstoOneCustomer(Request $request, int $id): JsonResponse
+    public function getAllUserstoOneCustomer(Request $request, int $id, VersioningService $versioningService ): JsonResponse
     {
 
         $customer = $this->customerRepository->find($id);
@@ -57,14 +58,16 @@ class CustomerController extends AbstractController
                 return $this->userRepository->findAllWithPagination($page, $limit, $id); 
             });
     
+            $version = $versioningService->getVersion();
             $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
+            $context->setVersion($version );
             $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
             return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
         }
     }
 
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
-    public function getDetailUsertoOneCustomer(int $id, int $userId): JsonResponse
+    public function getDetailUsertoOneCustomer(int $id, int $userId, VersioningService $versioningService): JsonResponse
     {
  
         $customer = $this->customerRepository->find($id);
@@ -87,7 +90,9 @@ class CustomerController extends AbstractController
             return $this->userRepository->find($userId); 
         });
 
+        $version = $versioningService->getVersion();
         $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
+        $context->setVersion($version );
         $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
         return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
 
@@ -99,7 +104,9 @@ class CustomerController extends AbstractController
     public function createUsertoOneCustomer(
         int $id, 
         Request $request, 
-        UrlGeneratorInterface $urlGenerator): JsonResponse
+        UrlGeneratorInterface $urlGenerator,
+        VersioningService $versioningService
+        ): JsonResponse
     {
 
 
@@ -117,12 +124,18 @@ class CustomerController extends AbstractController
             $newUser->setCustomer($customer);
             $newUser->setCreatedAt(new \DateTime());
             $newUser->setUpdatedAt(new \DateTime());
+
+            dump($newUser);
+            exit;
+            // $newUser->setSubscriptionAnniversaryDate()
             $this->entityManager->persist($newUser);
             $this->entityManager->flush();
 
             //return response json of user created
             //Serialization
+            $version = $versioningService->getVersion();
             $contextSerialization = SerializationContext::create()->setGroups(["getUsers"]);
+            $contextSerialization ->setVersion($version );
             $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
             $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);

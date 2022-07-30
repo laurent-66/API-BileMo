@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use DateTime;
 use Faker\Factory;
 use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
@@ -38,6 +39,7 @@ class UserFixture extends Fixture implements DependentFixtureInterface
             $user->setFirstName($faker->firstName());
             $user->setLastName($faker->lastName());
             $user->setEmail($faker->email());
+            $user->setSubscriptionAnniversaryDate($faker->dateTime());
             $user->setCreatedAt($faker->dateTime());
             $user->setUpdatedAt($faker->dateTime());
             $manager->persist($user); 
