@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\Customer;
+use App\Entity\Address;
+use App\Repository\CustomerRepository;
 use Doctrine\ORM\Mapping as ORM;
 use JMS\Serializer\Annotation\Since;
 use JMS\Serializer\Annotation\Groups;
@@ -13,11 +15,13 @@ use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * 
+ * 
  * @Hateoas\Relation(
- *      "self",
+ *      "detail",
  *      href = "expr('/api/customers/' ~ object.getCustomer().getId() ~ '/users/' ~ object.getId())",
- *      exclusion = @Hateoas\Exclusion(groups="getUsers")
+ *      exclusion = @Hateoas\Exclusion(groups="getUserMini")
  * )
+ * 
  * 
  * @Hateoas\Relation(
  *      "delete",
@@ -35,25 +39,25 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"getUsers"})
+     * @Groups({"getUserMini","getUsers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getUsers", "postUsers"})
+     * @Groups({"getUserMini", "getUsers","postUsers"})
      */
     private $firstName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getUsers", "postUsers"})
+     * @Groups({"getUserMini", "getUsers", "postUsers"})
      */
     private $lastName;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getUsers", "postUsers"})
+     * @Groups({"getUserMini", "getUsers", "postUsers"})
      */
     private $email;
 
@@ -75,11 +79,10 @@ class User
     private $customer;
 
     /**
-     * @var Collection
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
+     * @ORM\OneToOne(targetEntity=Address::class, mappedBy="resident", cascade={"ALL"})
      * @Groups({"getUsers", "getAddress"}) 
      */
-    private $addresses;
+    private $address;
 
     /**
      * @ORM\Column(type="date", nullable=true)
@@ -178,32 +181,15 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection<int, Address>
-     */
-    public function getAddresses(): Collection
+
+    public function getAddress(): ?Address
     {
-        return $this->addresses;
+        return $this->address;
     }
 
-    public function addAddress(Address $address): self
+    public function setAddress(Address $address): self
     {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses[] = $address;
-            $address->setResident($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        if ($this->addresses->removeElement($address)) {
-            // set the owning side to null (unless already changed)
-            if ($address->getResident() === $this) {
-                $address->setResident(null);
-            }
-        }
+        $this->address = $address;
 
         return $this;
     }

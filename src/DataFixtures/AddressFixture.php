@@ -17,11 +17,14 @@ class AddressFixture extends Fixture implements DependentFixtureInterface
 
         //fixtures Address
 
-        for($i = 0 ; $i < 15 ; $i++ ) {
+        for($i = 0 ; $i < 10 ; $i++ ) {
 
             $faker = Factory::create('fr_FR');
 
-            $userRandom = rand(0,9);
+            // $userRandom = rand(0,9);
+
+            $userRandom = $i;
+
             $customerRandom = 0;
 
             $address = new Address(); 
@@ -32,10 +35,7 @@ class AddressFixture extends Fixture implements DependentFixtureInterface
             $address->setFloor($faker->randomDigitNot(0));
             $address->setZipCode(rand(10000, 95000));
             $address->setCity($faker->words(1, true));
-            $address->setBilling($faker->boolean());
-            $address->setDelivery($faker->boolean());
             $address->setResident($this->getReference('user-ref_'.$userRandom));
-            $address->setCustomer($this->getReference('customer-ref_'.$customerRandom)); 
             $address->setCreatedAt($faker->dateTime());
             $address->setUpdatedAt($faker->dateTime()); 
 

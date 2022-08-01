@@ -6,7 +6,6 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Collections\ArrayCollection;
 use JMS\Serializer\Annotation\Groups;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -40,11 +39,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="customer")
      */
     private $users;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Address::class, mappedBy="customer")
-     */
-    private $addresses;
 
     /**
      * @ORM\Column(type="datetime")
@@ -137,36 +131,6 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($user->getCustomer() === $this) {
                 $user->setCustomer(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Address>
-     */
-    public function getAddresses(): Collection
-    {
-        return $this->addresses;
-    }
-
-    public function addAddress(Address $address): self
-    {
-        if (!$this->addresses->contains($address)) {
-            $this->addresses[] = $address;
-            $address->setCustomer($this);
-        }
-
-        return $this;
-    }
-
-    public function removeAddress(Address $address): self
-    {
-        if ($this->addresses->removeElement($address)) {
-            // set the owning side to null (unless already changed)
-            if ($address->getCustomer() === $this) {
-                $address->setCustomer(null);
             }
         }
 
