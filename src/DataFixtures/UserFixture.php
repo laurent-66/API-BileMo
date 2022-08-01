@@ -34,7 +34,6 @@ class UserFixture extends Fixture implements DependentFixtureInterface
             $customerRandom = rand(0,3);
 
             $user = new User(); 
-
             $user->setCustomer($this->getReference('customer-ref_'.$customerRandom)); 
             $user->setFirstName($faker->firstName());
             $user->setLastName($faker->lastName());
