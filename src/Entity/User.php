@@ -83,10 +83,18 @@ class User
 
     /**
      * @ORM\Column(type="date", nullable=true)
-     * @Groups({"getUsers", "getCustomers"})
+     * @Groups({"getUsers", "getCustomers", "postUsers"})
      * @Since("2.0")
      */
     private $subscriptionAnniversaryDate;
+
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     * @Groups({"getUsers", "getCustomers", "postUsers"})
+     * @Since("2.0")
+     */
+    private $comment;
+
 
     public function __construct()
     {
@@ -208,6 +216,18 @@ class User
     public function setSubscriptionAnniversaryDate(\DateTimeInterface $subscriptionAnniversaryDate): self
     {
         $this->subscriptionAnniversaryDate = $subscriptionAnniversaryDate;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
 
         return $this;
     }

@@ -15,10 +15,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CustomerController extends AbstractController 
 {
@@ -109,13 +111,13 @@ class CustomerController extends AbstractController
         ): JsonResponse
     {
 
-
         $customer = $this->customerRepository->find($id);
 
         if($customer === null) {
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
 
         } else {
+
             // transform the json data on object
             //Deserialization
             $contextDeserialization = DeserializationContext::create()->setGroups(["postUsers"]);
@@ -125,9 +127,6 @@ class CustomerController extends AbstractController
             $newUser->setCreatedAt(new \DateTime());
             $newUser->setUpdatedAt(new \DateTime());
 
-            dump($newUser);
-            exit;
-            // $newUser->setSubscriptionAnniversaryDate()
             $this->entityManager->persist($newUser);
             $this->entityManager->flush();
 

@@ -31,7 +31,7 @@ class UserFixture extends Fixture implements DependentFixtureInterface
 
             $faker = Factory::create('fr_FR');
 
-            $customerRandom = 0;
+            $customerRandom = rand(0,3);
 
             $user = new User(); 
 
@@ -40,6 +40,7 @@ class UserFixture extends Fixture implements DependentFixtureInterface
             $user->setLastName($faker->lastName());
             $user->setEmail($faker->email());
             $user->setSubscriptionAnniversaryDate($faker->dateTime());
+            $user->setComment($faker->sentence());
             $user->setCreatedAt($faker->dateTime());
             $user->setUpdatedAt($faker->dateTime());
             $manager->persist($user); 
