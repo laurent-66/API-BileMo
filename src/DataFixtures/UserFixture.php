@@ -31,7 +31,8 @@ class UserFixture extends Fixture implements DependentFixtureInterface
 
             $faker = Factory::create('fr_FR');
 
-            $customerRandom = rand(0,3);
+            // $customerRandom = rand(0,3);
+            $customerRandom = 0;
 
             $user = new User(); 
             $user->setCustomer($this->getReference('customer-ref_'.$customerRandom)); 
