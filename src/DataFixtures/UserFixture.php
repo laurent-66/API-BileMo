@@ -15,13 +15,6 @@ class UserFixture extends Fixture implements DependentFixtureInterface
 
     public const USER_REF = 'user-ref_%s';
 
-    // private $passwordHasher;
-
-    // public function __construct( UserPasswordHasherInterface $passwordHasher)
-    // {
-    //     $this->passwordHasher = $passwordHasher;
-    // }
-
     public function load(ObjectManager $manager)
     {
 
@@ -31,7 +24,8 @@ class UserFixture extends Fixture implements DependentFixtureInterface
 
             $faker = Factory::create('fr_FR');
 
-            $customerRandom = rand(0,3);
+            // $customerRandom = rand(0,3);
+            $customerRandom = 0;
 
             $user = new User(); 
             $user->setCustomer($this->getReference('customer-ref_'.$customerRandom)); 
