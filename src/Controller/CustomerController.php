@@ -15,12 +15,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 class CustomerController extends AbstractController 
 {
@@ -29,7 +27,8 @@ class CustomerController extends AbstractController
         TagAwareCacheInterface $cachePool,
         EntityManagerInterface $entityManager,
         CustomerRepository $customerRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        VersioningService $versioningService
         )
     {
         $this->serializer = $serializer;
@@ -37,6 +36,7 @@ class CustomerController extends AbstractController
         $this->entityManager = $entityManager;
         $this->customerRepository = $customerRepository;
         $this->userRepository = $userRepository;
+        $this->versioningService = $versioningService;
     }
 
     #[Route('/api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
@@ -61,7 +61,7 @@ class CustomerController extends AbstractController
             });
     
             $version = $versioningService->getVersion();
-            $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
+            $context = SerializationContext::create()->setGroups(["getUserMini"]);
             $context->setVersion($version );
             $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
             return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
@@ -90,16 +90,17 @@ class CustomerController extends AbstractController
             echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
             $item->tag("oneUserCache-".$userId);
             return $this->userRepository->find($userId); 
+
         });
 
         $version = $versioningService->getVersion();
         $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
         $context->setVersion($version );
+
         $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
         return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
 
         }
-
     }
 
     #[Route('api/customers/{id}/users', name: 'postUserToOneCustomer', methods:['POST'])]
@@ -133,13 +134,14 @@ class CustomerController extends AbstractController
             //return response json of user created
             //Serialization
             $version = $versioningService->getVersion();
-            $contextSerialization = SerializationContext::create()->setGroups(["getUsers"]);
+            $contextSerialization = SerializationContext::create()->setGroups(["getUsers","getCustomers"]);
             $contextSerialization ->setVersion($version );
             $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
             $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
             return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
 
         }
+
     }
 
 

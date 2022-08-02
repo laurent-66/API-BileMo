@@ -55,18 +55,6 @@ class Address
     private $city;
 
     /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"getAddress"})
-     */
-    private $billing;
-
-    /**
-     * @ORM\Column(type="boolean")
-     * @Groups({"getAddress"})
-     */
-    private $delivery;
-
-    /**
      * @ORM\Column(type="datetime")
      */
     private $createdAt;
@@ -79,14 +67,10 @@ class Address
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"getAddress"})
      */
     private $resident;
 
-    /**
-     * @ORM\ManyToOne(targetEntity=Customer::class, inversedBy="addresses")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $customer;
 
     public function getId(): ?int
     {
@@ -165,30 +149,6 @@ class Address
         return $this;
     }
 
-    public function isBilling(): ?bool
-    {
-        return $this->billing;
-    }
-
-    public function setBilling(bool $billing): self
-    {
-        $this->billing = $billing;
-
-        return $this;
-    }
-
-    public function isDelivery(): ?bool
-    {
-        return $this->delivery;
-    }
-
-    public function setDelivery(bool $delivery): self
-    {
-        $this->delivery = $delivery;
-
-        return $this;
-    }
-
     public function getCreatedAt(): ?\DateTime
     {
         return $this->createdAt;
@@ -225,15 +185,4 @@ class Address
         return $this;
     }
 
-    public function getCustomer(): ?Customer
-    {
-        return $this->customer;
-    }
-
-    public function setCustomer(?Customer $customer): self
-    {
-        $this->customer = $customer;
-
-        return $this;
-    }
 }

@@ -8,19 +8,11 @@ use App\Entity\User;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-// use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserFixture extends Fixture implements DependentFixtureInterface
 {
 
     public const USER_REF = 'user-ref_%s';
-
-    // private $passwordHasher;
-
-    // public function __construct( UserPasswordHasherInterface $passwordHasher)
-    // {
-    //     $this->passwordHasher = $passwordHasher;
-    // }
 
     public function load(ObjectManager $manager)
     {
