@@ -95,6 +95,12 @@ class UserController extends AbstractController
         }
     }
     /** 
+    * @OA\Response(
+    *     response=200,
+    *     description="Retourne la liste des utilisateurs",
+    * @Model(type=User::class, groups={"getUsers"})
+    *     
+    * )
     * @OA\Tag(name="Users")
     */
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
@@ -176,6 +182,13 @@ class UserController extends AbstractController
     }
 
     /** 
+     * 
+    * @OA\Response(
+    *     response=204,
+    *     description="l'utilisateur a bien été supprimé",
+    * @Model(type=User::class, groups={"getUsers"})
+    *     
+    * )
     * @OA\Tag(name="Users")
     */
     #[Route('api/customers/{id}/users/{userId}', name: 'deleteUserToOneCustomer', methods:['DELETE'])]
