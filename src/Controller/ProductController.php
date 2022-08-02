@@ -2,21 +2,22 @@
 
 namespace App\Controller;
 
+use App\Entity\Product;
+use OpenApi\Annotations as OA;
 use App\Repository\UserRepository;
 use App\Repository\ProductRepository;
 use App\Repository\CustomerRepository;
+use JMS\Serializer\SerializerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use Symfony\Contracts\Cache\ItemInterface;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Contracts\Cache\TagAwareCacheInterface;
-use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use OpenApi\Annotations as OA;
 
 class ProductController extends AbstractController
 {
@@ -78,6 +79,12 @@ class ProductController extends AbstractController
         return new JsonResponse($jsonproductList, Response::HTTP_OK, [], true);
     }
     /** 
+    * @OA\Response(
+    *     response=200,
+    *     description="Retourne la liste des produits",
+    * @Model(type=Product::class, groups={"getproducts"})
+    *     
+    * )
     * @OA\Tag(name="Products")
     */
     #[Route('/api/products/{id}', name: 'detailproducts', methods:['GET'])]
