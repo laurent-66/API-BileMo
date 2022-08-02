@@ -50,6 +50,16 @@ class UserRepository extends ServiceEntityRepository
         ->getResult();
 
         }
+
+    public function findAllUsersWithPagination($page, $limit){
+
+        return $this->createQueryBuilder('u')
+        ->setFirstResult(($page -1) * $limit)
+        ->setMaxResults($limit)
+        ->getQuery()
+        ->getResult();
+        }
+
     }
 
 //    /**

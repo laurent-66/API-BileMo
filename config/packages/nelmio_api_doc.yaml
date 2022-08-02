@@ -41,6 +41,20 @@ nelmio_api_doc:
                         password:
                             type: string
                             default: admin
+                Product:
+                    type: object
+                    properties:
+                        id:
+                            type: integer
+                        name:
+                            type: string
+                        description:
+                            type: string
+                        picture:
+                            type: string
+                        alternativeAttribute:
+                            type: string
+
             securitySchemes:
                 bearerAuth:
                     type: apiKey
