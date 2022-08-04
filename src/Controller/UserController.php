@@ -3,14 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use OpenApi\Annotations as OA;
 use App\Repository\UserRepository;
 use App\Service\VersioningService;
+use OpenApi\Annotations\RequestBody;
 use App\Repository\CustomerRepository;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use JMS\Serializer\DeserializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,9 +23,6 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use OpenApi\Annotations as OA;
 
 class UserController extends AbstractController 
 {
@@ -137,7 +138,18 @@ class UserController extends AbstractController
 
         }
     }
+
+
+
+
+
+
+
     /** 
+    * @OA\RequestBody(content="application/json") 
+    * @OA\Schema(
+    *    type="object",
+    * )
     * @OA\Tag(name="Users")
     */
     #[Route('api/customers/{id}/users', name: 'postUserToOneCustomer', methods:['POST'])]

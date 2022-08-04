@@ -27,8 +27,6 @@ class SecurityController extends AbstractController
 
         if (null === $currentCustomer) {
 
-            dd($currentCustomer->getUserIdentifier());
-
             return new JsonResponse([
             'message' => 'missing credentials'], Response::HTTP_UNAUTHORIZED);
         }
