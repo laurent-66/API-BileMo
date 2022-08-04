@@ -24,6 +24,7 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: '#/components/schemas/Token'
+
         components:
             schemas:
                 Token:
@@ -49,5 +50,7 @@ nelmio_api_doc:
         security:
             - bearerAuth: []
     areas: # to filter documented areas
+        disable_default_routes: true    
+
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
