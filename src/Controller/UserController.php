@@ -3,14 +3,18 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use OpenApi\Annotations as OA;
 use App\Repository\UserRepository;
 use App\Service\VersioningService;
+use OpenApi\Annotations\RequestBody;
 use App\Repository\CustomerRepository;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use JMS\Serializer\SerializationContext;
+use Nelmio\ApiDocBundle\Annotation\Model;
 use JMS\Serializer\DeserializationContext;
 use Symfony\Contracts\Cache\ItemInterface;
+use Nelmio\ApiDocBundle\Annotation\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,9 +23,6 @@ use Symfony\Contracts\Cache\TagAwareCacheInterface;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Nelmio\ApiDocBundle\Annotation\Model;
-use Nelmio\ApiDocBundle\Annotation\Security;
-use OpenApi\Annotations as OA;
 
 class UserController extends AbstractController 
 {
@@ -137,7 +138,18 @@ class UserController extends AbstractController
 
         }
     }
+
+
+
+
+
+
+
     /** 
+    * @OA\RequestBody(content="application/json") 
+    * @OA\Schema(
+    *    type="object",
+    * )
     * @OA\Tag(name="Users")
     */
     #[Route('api/customers/{id}/users', name: 'postUserToOneCustomer', methods:['POST'])]
@@ -156,27 +168,43 @@ class UserController extends AbstractController
 
         } else {
 
+
             // transform the json data on object
             //Deserialization
             $contextDeserialization = DeserializationContext::create()->setGroups(["postUsers"]);
             $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', $contextDeserialization); 
 
-            $newUser->setCustomer($customer);
-            $newUser->setCreatedAt(new \DateTime());
-            $newUser->setUpdatedAt(new \DateTime());
+            if(
+                ($newUser->getFirstName() === null || $newUser->getFirstName() === "") &&
+                ($newUser->getLastName() === null || $newUser->getLastName() === "") &&
+                ($newUser->getEmail() === null || $newUser->getEmail() === "" )
+            ) 
+            {
+                return new JsonResponse(['message'=>'Fields must not be null or empty'],Response::HTTP_NOT_FOUND);
+            } else if($newUser->getFirstName() === null || $newUser->getFirstName() === "" ) {
+                return new JsonResponse(['message'=>'The field firstName must not be null or empty'],Response::HTTP_NOT_FOUND);
+            } else if($newUser->getLastName() === null || $newUser->getLastName() === "" ) {
+                return new JsonResponse(['message'=>'The field lastName must not be null or empty'],Response::HTTP_NOT_FOUND);
+            } else if($newUser->getEmail() === null || $newUser->getEmail() === "" ) {
+                return new JsonResponse(['message'=>'The field email must not be null or empty'],Response::HTTP_NOT_FOUND);
+            } else {
 
-            $this->entityManager->persist($newUser);
-            $this->entityManager->flush();
-
-            //return response json of user created
-            //Serialization
-            $version = $versioningService->getVersion();
-            $contextSerialization = SerializationContext::create()->setGroups(["getUsers","getCustomers"]);
-            $contextSerialization ->setVersion($version );
-            $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
-            $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-            return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
-
+                $newUser->setCustomer($customer);
+                $newUser->setCreatedAt(new \DateTime());
+                $newUser->setUpdatedAt(new \DateTime());
+    
+                $this->entityManager->persist($newUser);
+                $this->entityManager->flush();
+    
+                //return response json of user created
+                //Serialization
+                $version = $versioningService->getVersion();
+                $contextSerialization = SerializationContext::create()->setGroups(["getUsers","getCustomers"]);
+                $contextSerialization ->setVersion($version );
+                $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
+                $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+                return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
+            }
         }
 
     }

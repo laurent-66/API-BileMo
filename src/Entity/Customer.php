@@ -30,13 +30,15 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $name;
 
-        /**
+    /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="customers")
+     * @Groups({"getproducts"})
      */
     private $products;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="customer")
+     * @Groups({"getUsers"})
      */
     private $users;
 

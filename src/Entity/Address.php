@@ -67,7 +67,7 @@ class Address
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"getAddress"})
+     * @Groups({"getAddress", "getUsers"})
      */
     private $resident;
 

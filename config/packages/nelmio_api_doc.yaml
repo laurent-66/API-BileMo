@@ -24,6 +24,31 @@ nelmio_api_doc:
                                 application/json:
                                     schema:
                                         $ref: '#/components/schemas/Token'
+
+            /api/users:
+                get:
+                    summary: Permet d'obtenir la liste des utilisateurs de tout les opérateurs.
+
+            # /api/customers/{id}/users:
+            #     post:
+            #         tags:
+            #             - Users
+            #         summary: Permet de créer un nouvel utilisateur pour un opérateur.
+            #         requestBody:
+            #             content:
+            #                 application/json:
+            #                     schema:
+            #                         type: object
+            #                         properties:
+            #                             firstName:
+            #                                 type: string
+            #                             lastName:
+            #                                 type: string
+            #                             email:
+            #                                 type: string
+
+
+
         components:
             schemas:
                 Token:
@@ -49,5 +74,7 @@ nelmio_api_doc:
         security:
             - bearerAuth: []
     areas: # to filter documented areas
+        # disable_default_routes: true    
+
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
