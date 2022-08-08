@@ -27,27 +27,44 @@ nelmio_api_doc:
 
             /api/users:
                 get:
-                    summary: Permet d'obtenir la liste des utilisateurs de tout les opérateurs.
+                    summary: Permet d'obtenir la liste des utilisateurs de tous les opérateurs.
 
-            # /api/customers/{id}/users:
-            #     post:
-            #         tags:
-            #             - Users
-            #         summary: Permet de créer un nouvel utilisateur pour un opérateur.
-            #         requestBody:
-            #             content:
-            #                 application/json:
-            #                     schema:
-            #                         type: object
-            #                         properties:
-            #                             firstName:
-            #                                 type: string
-            #                             lastName:
-            #                                 type: string
-            #                             email:
-            #                                 type: string
+            /api/customers/{id}/users:
+                get:
+                    summary: Permet d'obtenir la liste des utilisateurs pour un opérateur.
 
+                post:
+                    tags:
+                        - Users
+                    summary: Permet de créer un nouvel utilisateur pour un opérateur.
+                    requestBody:
+                        description: Crée un nouvel utilisateur
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: '#/components/schemas/User'
+                    responses:
+                        '200':
+                            description: le nouvel utilisateur a bien été créé
+                            content:
+                                application/json:
+                                    schema:
+                                        $ref: '#/components/schemas/User'
 
+            /api/customers/{id}/users/{userId}:
+                get:
+                    summary: Permet d'obtenir un utilisateur d'un opérateur.
+
+                delete:
+                    summary: Permet de supprimer un utilisateur d'un opérateur.                    
+
+            /api/products:
+                get:
+                    summary: Liste de tous produits
+
+            /api/products/{id}:
+                get:
+                    summary: Détail d'un produit                 
 
         components:
             schemas:
@@ -66,6 +83,25 @@ nelmio_api_doc:
                         password:
                             type: string
                             default: admin
+                User:
+                    type: object
+                    properties:
+                        firstName:
+                            type: string
+                            default: string
+                        lastName:
+                            type: string
+                            default: string
+                        email:
+                            type: string
+                            default: string
+                        subscriptionAnniversaryDate:
+                            type: string
+                            default: string
+                        comment:
+                            type: string
+                            default: string        
+
             securitySchemes:
                 bearerAuth:
                     type: apiKey
@@ -74,7 +110,7 @@ nelmio_api_doc:
         security:
             - bearerAuth: []
     areas: # to filter documented areas
-        # disable_default_routes: true    
+        disable_default_routes: true    
 
         path_patterns:
             - ^/api(?!/doc$) # Accepts routes under /api except /api/doc
