@@ -21,18 +21,18 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getUsers"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=45)
-     * @Groups({"getCustomers"})
+     * @Groups({"getUsers","getCustomers"})
      */
     private $name;
 
     /**
      * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="customers")
-     * @Groups({"getproducts"})
      */
     private $products;
 
@@ -54,6 +54,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="string", length=180, unique=true)
+     * @Groups({"getUsers"})
      */
     private $email;
 
@@ -65,6 +66,7 @@ class Customer implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      * @ORM\Column(type="string", nullable="true")
+     * @Groups({"getUsers"})
      */
     private $password;
 

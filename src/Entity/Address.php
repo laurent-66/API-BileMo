@@ -15,42 +15,43 @@ class Address
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"getUsers","getAddress"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"getAddress"})
+     * @Groups({"getUsers","getAddress"})
      */
     private $number;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getAddress"})
+     * @Groups({"getUsers","getAddress"})
      */
     private $path;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"getAddress"})
+     * @Groups({"getUsers","getAddress"})
      */
     private $apartment;
 
     /**
      * @ORM\Column(type="integer", nullable=true)
-     * @Groups({"getAddress"})
+     * @Groups({"getUsers","getAddress"})
      */
     private $floor;
 
     /**
      * @ORM\Column(type="integer")
-     * @Groups({"getAddress"})
+     * @Groups({"getUsers","getAddress"})
      */
     private $zipCode;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"getAddress"})
+     * @Groups({"getUsers","getAddress"})
      */
     private $city;
 
@@ -67,7 +68,7 @@ class Address
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="addresses")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"getAddress", "getUsers"})
+     * @Groups({"getUsers"})
      */
     private $resident;
 

@@ -4,9 +4,9 @@ namespace App\Controller;
 
 use App\Entity\User;
 use OpenApi\Annotations as OA;
+use OpenApi\Annotations\Property;
 use App\Repository\UserRepository;
 use App\Service\VersioningService;
-use OpenApi\Annotations\RequestBody;
 use App\Repository\CustomerRepository;
 use JMS\Serializer\SerializerInterface;
 use Doctrine\ORM\EntityManagerInterface;
@@ -95,6 +95,7 @@ class UserController extends AbstractController
             return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
         }
     }
+    
     /** 
     * @OA\Response(
     *     response=200,
@@ -140,18 +141,6 @@ class UserController extends AbstractController
     }
 
 
-
-
-
-
-
-    /** 
-    * @OA\RequestBody(content="application/json") 
-    * @OA\Schema(
-    *    type="object",
-    * )
-    * @OA\Tag(name="Users")
-    */
     #[Route('api/customers/{id}/users', name: 'postUserToOneCustomer', methods:['POST'])]
     public function createUsertoOneCustomer(
         int $id, 
