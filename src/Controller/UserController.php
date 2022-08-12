@@ -68,32 +68,46 @@ class UserController extends AbstractController
     * @OA\Tag(name="Users")
     */
     #[Route('/api/customers/{id}/users', name: 'allUsersToOneCustomer', methods:['GET'])]
-    public function getAllUserstoOneCustomer(Request $request, int $id, VersioningService $versioningService ): JsonResponse
+    public function getAllUserstoOneCustomer(
+        Request $request, 
+        int $id, 
+        VersioningService $versioningService
+        ): JsonResponse
     {
 
-        $customer = $this->customerRepository->find($id);
+            $customer = $this->customerRepository->find($id);
 
-        if($customer === null) {
-            return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
-
-        } else {
-
-            $page = $request->get('page', 1);
-            $limit = $request->get('limit', 3);
+            if($customer === null) {
+                return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
     
-            $idCache = "getAllUsers-" . $page . "-" . $limit;
-            $userList = $this->cachePool->get($idCache, function (ItemInterface $item) use ($page, $limit, $id) {
-                echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
-                $item->tag("usersCache");
-                return $this->userRepository->findAllWithPagination($page, $limit, $id); 
-            });
+            } else {
+
+                $customerConnectedId = $this->getUser()->getId();
+
+                if($customerConnectedId  === $id) {
     
-            $version = $versioningService->getVersion();
-            $context = SerializationContext::create()->setGroups(["getUserMini"]);
-            $context->setVersion($version );
-            $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
-            return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
-        }
+                    $page = $request->get('page', 1);
+                    $limit = $request->get('limit', 3);
+            
+                    $idCache = "getAllUsers-" . $page . "-" . $limit;
+                    $userList = $this->cachePool->get($idCache, function (ItemInterface $item) use ($page, $limit, $id) {
+                        echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
+                        $item->tag("usersCache");
+                        return $this->userRepository->findAllWithPagination($page, $limit, $id); 
+                    });
+            
+                    $version = $versioningService->getVersion();
+                    $context = SerializationContext::create()->setGroups(["getUserMini"]);
+                    $context->setVersion($version );
+                    $jsonUsersList = $this->serializer->serialize($userList, 'json', $context );
+                    return new JsonResponse($jsonUsersList , Response::HTTP_OK, [], true);
+
+                }else {
+                    return new JsonResponse(['Message'=>'Access denied'],Response::HTTP_FORBIDDEN);
+                }
+
+            }
+
     }
     
     /** 
