@@ -122,36 +122,38 @@ class UserController extends AbstractController
     #[Route('api/customers/{id}/users/{userId}', name: 'detailUserToOneCustomer', methods:['GET'])]
     public function getDetailUsertoOneCustomer(int $id, int $userId, VersioningService $versioningService): JsonResponse
     {
- 
         $customer = $this->customerRepository->find($id);
         $user = $this->userRepository->find($userId);
 
         if($customer === null) {
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
-
-        } else if($user === null) { 
-
-        return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
-
-        } else {
-
-        $idCache = "getOneUser-" . $userId;
-
-        $user = $this->cachePool->get($idCache, function (ItemInterface $item) use($userId, $user) {
-            echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
-            $item->tag("oneUserCache-".$userId);
-            return $this->userRepository->find($userId); 
-
-        });
-
-        $version = $versioningService->getVersion();
-        $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
-        $context->setVersion($version );
-
-        $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
-        return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
-
-        }
+        } else { 
+            $customerConnectedId = $this->getUser()->getId();
+            if($customerConnectedId === $id) {
+                if($userId === null) {
+                    return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
+                } else {
+                    if($customerConnectedId === $user->getCustomer()->getId()) {
+                        $idCache = "getOneUser-" . $userId;
+                        $user = $this->cachePool->get($idCache, function (ItemInterface $item) use($userId, $user) {
+                            echo ("L'ELEMENT N'EST PAS ENCORE EN CACHE !\n");
+                            $item->tag("oneUserCache-".$userId);
+                            return $this->userRepository->find($userId); 
+                        });
+                        $version = $versioningService->getVersion();
+                        $context = SerializationContext::create()->setGroups(["getUsers", "getCustomers", "getAddress"]);
+                        $context->setVersion($version );
+                
+                        $jsonDetailUserCache = $this->serializer->serialize($user, 'json', $context );
+                        return new JsonResponse($jsonDetailUserCache , Response::HTTP_OK, [], true);
+                    } else { 
+                        return new JsonResponse(['message'=>'Accès denied for this user'],Response::HTTP_FORBIDDEN);
+                    }
+                }
+            }else {
+                return new JsonResponse(['Message'=>'Access denied'],Response::HTTP_FORBIDDEN);
+            }
+        };
     }
 
 
