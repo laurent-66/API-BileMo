@@ -227,31 +227,29 @@ class UserController extends AbstractController
     #[Route('api/customers/{id}/users/{userId}', name: 'deleteUserToOneCustomer', methods:['DELETE'])]
     public function deleteUser( EntityManagerInterface $em, int $id, int $userId): JsonResponse
     {
-
         $customer = $this->customerRepository->find($id);
-        $user = $this->userRepository->find($userId);
-
         if($customer === null) {
-
             return new JsonResponse(['message'=>'This customer not exist'],Response::HTTP_NOT_FOUND);
-
-        } else if($user === null) { 
-
-            return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
- 
         } else {
-            try {
-                $this->cachePool->invalidateTags(["usersCache"]);
-                $this->entityManager->remove($user);
-                $this->entityManager->flush();
-
-                return new JsonResponse(null, Response::HTTP_NO_CONTENT);
-            } catch (Exception $e) {
-                dump($e);
+            $customerConnectedId = $this->getUser()->getId();
+            if($customerConnectedId === $id) {
+                    $user = $this->userRepository->find($userId);
+                    if($user) {
+                        if($customerConnectedId === $user->getCustomer()->getId()) {
+                            $this->cachePool->invalidateTags(["usersCache"]);
+                            $this->entityManager->remove($user);
+                            $this->entityManager->flush();
+                            return new JsonResponse(['message'=>'the user has been deleted'], Response::HTTP_NO_CONTENT);
+                        } else {
+                            return new JsonResponse(['message'=>'Accès denied for this user'],Response::HTTP_FORBIDDEN);
+                        }
+                    } else {
+                        return new JsonResponse(['message'=>'This user not exist'],Response::HTTP_NOT_FOUND);
+                    }
+            }else {
+                return new JsonResponse(['Message'=>'Access denied'],Response::HTTP_FORBIDDEN);
             }
-
         } 
-
     }
 
     /** 
