@@ -85,7 +85,7 @@ class User
     private $address;
 
     /**
-     * @ORM\Column(type="date", nullable=true)
+     * @ORM\Column(type="date", nullable=false)
      * @Groups({"getUsers", "getCustomers", "postUsers"})
      * @Since("2.0")
      */

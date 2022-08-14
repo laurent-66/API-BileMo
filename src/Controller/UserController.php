@@ -173,45 +173,49 @@ class UserController extends AbstractController
 
         } else {
 
+            $customerConnectedId = $this->getUser()->getId();
 
-            // transform the json data on object
-            //Deserialization
-            $contextDeserialization = DeserializationContext::create()->setGroups(["postUsers"]);
-            $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', $contextDeserialization); 
+            if($customerConnectedId  === $id) {
 
-            if(
-                ($newUser->getFirstName() === null || $newUser->getFirstName() === "") &&
-                ($newUser->getLastName() === null || $newUser->getLastName() === "") &&
-                ($newUser->getEmail() === null || $newUser->getEmail() === "" )
-            ) 
-            {
-                return new JsonResponse(['message'=>'Fields must not be null or empty'],Response::HTTP_NOT_FOUND);
-            } else if($newUser->getFirstName() === null || $newUser->getFirstName() === "" ) {
-                return new JsonResponse(['message'=>'The field firstName must not be null or empty'],Response::HTTP_NOT_FOUND);
-            } else if($newUser->getLastName() === null || $newUser->getLastName() === "" ) {
-                return new JsonResponse(['message'=>'The field lastName must not be null or empty'],Response::HTTP_NOT_FOUND);
-            } else if($newUser->getEmail() === null || $newUser->getEmail() === "" ) {
-                return new JsonResponse(['message'=>'The field email must not be null or empty'],Response::HTTP_NOT_FOUND);
+                $contextDeserialization = DeserializationContext::create()->setGroups(["postUsers"]);
+                $newUser = $this->serializer->deserialize($request->getContent(), User::class, 'json', $contextDeserialization); 
+    
+                if(
+                    ($newUser->getFirstName() === null || $newUser->getFirstName() === "") &&
+                    ($newUser->getLastName() === null || $newUser->getLastName() === "") &&
+                    ($newUser->getEmail() === null || $newUser->getEmail() === "" )
+                ) 
+                {
+                    return new JsonResponse(['message'=>'Fields must not be null or empty'],Response::HTTP_NOT_FOUND);
+                } else if($newUser->getFirstName() === null || $newUser->getFirstName() === "" ) {
+                    return new JsonResponse(['message'=>'The field firstName must not be null or empty'],Response::HTTP_NOT_FOUND);
+                } else if($newUser->getLastName() === null || $newUser->getLastName() === "" ) {
+                    return new JsonResponse(['message'=>'The field lastName must not be null or empty'],Response::HTTP_NOT_FOUND);
+                } else if($newUser->getEmail() === null || $newUser->getEmail() === "" ) {
+                    return new JsonResponse(['message'=>'The field email must not be null or empty'],Response::HTTP_NOT_FOUND);
+                } else if($newUser->getSubscriptionAnniversaryDate() === null || $newUser->getSubscriptionAnniversaryDate() === "" ) {
+                    return new JsonResponse(['message'=>'The field subscriptionAnniversaryDate must not be null or empty'],Response::HTTP_NOT_FOUND);
+                } else {
+    
+                    $newUser->setCustomer($customer);
+                    $newUser->setCreatedAt(new \DateTime());
+                    $newUser->setUpdatedAt(new \DateTime());
+
+                    $this->entityManager->persist($newUser);
+                    $this->entityManager->flush();
+
+                    $version = $versioningService->getVersion();
+                    $contextSerialization = SerializationContext::create()->setGroups(["getUsers","getCustomers"]);
+                    $contextSerialization ->setVersion($version );
+                    $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
+                    $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
+                    return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
+                }
+
             } else {
-
-                $newUser->setCustomer($customer);
-                $newUser->setCreatedAt(new \DateTime());
-                $newUser->setUpdatedAt(new \DateTime());
-    
-                $this->entityManager->persist($newUser);
-                $this->entityManager->flush();
-    
-                //return response json of user created
-                //Serialization
-                $version = $versioningService->getVersion();
-                $contextSerialization = SerializationContext::create()->setGroups(["getUsers","getCustomers"]);
-                $contextSerialization ->setVersion($version );
-                $jsonNewUser = $this->serializer->serialize($newUser,'json', $contextSerialization );
-                $location = $urlGenerator->generate('detailUserToOneCustomer', ['id'=>$customer->getId(), 'userId'=>$newUser->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
-                return new JsonResponse($jsonNewUser, Response::HTTP_CREATED, ["Location" => $location], true);
+                return new JsonResponse(['Message'=>'Access denied'],Response::HTTP_FORBIDDEN);
             }
         }
-
     }
 
     /** 
